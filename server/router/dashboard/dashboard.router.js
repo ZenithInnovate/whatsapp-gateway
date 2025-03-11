@@ -2,6 +2,7 @@ import fs from "fs";
 import express from "express";
 import SessionDatabase from "../../database/db/session.db.js";
 import { AutoReply } from "../../database/db/messageRespon.db.js";
+import Kontak from "../../database/db/kontak.db.js";
 import HistoryMessage from "../../database/db/history.db.js";
 const router = express.Router();
 
@@ -40,9 +41,11 @@ router.get("/auto-reply", async (req, res) => {
 	});
 });
 
-router.get("/api-doc", async (req, res) => {
-	res.render("dashboard/apidoc", {
+router.get("/kontak", async (req, res) => {
+	let db = await new Kontak().getAllMessage();
+	res.render("dashboard/kontak", {
 		layout: "layouts/main",
+		db,
 	});
 });
 

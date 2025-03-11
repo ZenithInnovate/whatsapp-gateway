@@ -24,14 +24,13 @@
 				<div class="card">
 					<div class="card-header">
 						<h5 class="card-title">List Response</h5>
-						<p class="text-subtitle text-muted">You can add auto-reply keywords via the button below</p>
+						<div>
+							<button onclick="alertKeywordAutoReply(true)" style="margin-top: 2px" class="btn btn-success" title="Add"><i class="fa-solid fa-pen-to-square"></i>&nbsp;&nbsp; Add</button>
+							<button onclick="alertDeleteAllKeyword()" style="margin-top: 5px" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+								<i class="fa-solid fa-trash-can"></i>&nbsp;&nbsp; Delete All
+							</button>
+						</div>
 					</div>
-					<center>
-						<button onclick="alertKeywordAutoReply(true)" style="margin-top: 2px" class="btn btn-success" title="Add Keyword"><i class="fa-solid fa-pen-to-square"></i>&nbsp;&nbsp; Add Keyword</button>
-						<button onclick="alertDeleteAllKeyword()" style="margin-top: 5px" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Keyword">
-							<i class="fa-solid fa-trash-can"></i>&nbsp;&nbsp; Delete All Keyword
-						</button>
-					</center>
 					<div class="card-body">
 						<div style="overflow-x: auto !important">
 							<table class="table" id="table1">
@@ -81,7 +80,7 @@
 		<footer>
 			<div class="divider">
 				<div class="divider-text">
-					<a href="https://github.com/fawwaz37/whatsapp-gateway" target="_blank">Zekais - 2022 &copy; Mazer</a>
+					<a href="https://github.com/fawwaz37/whatsapp-gateway" target="_blank">Akas - 2022 &copy; Mazer</a>
 				</div>
 			</div>
 		</footer>

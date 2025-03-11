@@ -1,0 +1,207 @@
+<div class="main-content">
+	<div class="content-wrapper container">
+		<%- include('../layouts/alert') %>
+		<div class="page-heading">
+			<div class="page-title">
+				<div class="row">
+					<div class="col-12 col-md-6 order-md-1 order-last">
+						<h3>Kontak</h3>
+					</div>
+					<div class="col-12 col-md-6 order-md-2 order-first">
+						<nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+								<li class="breadcrumb-item active" aria-current="page">Kontak</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-content">
+			<section class="section">
+				<div class="card">
+					<div class="card-header d-flex justify-content-between align-items-center">
+						<h5 class="card-title">Kontak Table</h5>
+						<div>
+							<button onclick="alertKontak(true)" class="btn btn-success" title="Add">
+								<i class="fa-solid fa-pen-to-square"></i> Add
+							</button>
+							<button onclick="alertDeleteAllKontak()" class="btn btn-danger" title="Delete All">
+								<i class="fa-solid fa-trash-can"></i> Delete All
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table" id="table1">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Telephone</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% if (Array.isArray(db) && db.length) { %> 
+										<% db.forEach((el) => { %>
+											<tr>
+												<td><%= el.name %></td>
+												<td><%= el.telephone %></td>
+												<td>
+													<button onclick="alertKontak(false, '<%= el.telephone %>', '<%= el.name %>')" style="margin-top: 5px" class="btn btn-primary" title="Edit Keyword">
+														<i class="fa-solid fa-pen-to-square"></i>
+													</button>
+													<button
+														onclick="alertDeleteKontak('<%= el.telephone %>', '<%= el.name %>')"
+														style="margin-top: 5px"
+														class="btn btn-danger"
+														data-bs-toggle="tooltip"
+														data-bs-placement="top"
+														title="Delete Keyword"
+													>
+														<i class="fa-solid fa-trash-can"></i>
+													</button>
+												</td>
+											</tr>
+										<% }); %> 
+									<% } %>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<footer>
+			<div class="divider">
+				<div class="divider-text">
+					<a href="https://github.com/fawwaz37/whatsapp-gateway" target="_blank">Akas - 2022 &copy; Mazer</a>
+				</div>
+			</div>
+		</footer>
+	</div>
+</div>
+
+<script src="/assets/extensions/jquery/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
+<script src="/assets/js/pages/datatables.js"></script>
+
+<script>
+	async function alertDeleteKontak(telephone, name) {
+		Swal.fire({
+			title: `Delete Kontak`,
+			html: `Are you sure you want to delete contact <strong>${name}</strong>?`,
+			icon: "warning",
+			confirmButtonText: `Delete`,
+			showCancelButton: true,
+			showLoaderOnConfirm: true,
+			preConfirm: async () => {
+				try {
+					const response = await fetch(`/kontak/delete?telephone=${telephone}`);
+					if (!response.ok) throw new Error(response.statusText);
+					return response.json();
+				} catch (error) {
+					Swal.showValidationMessage(`Request failed: ${error}`);
+				}
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				const { status, message } = result.value;
+				if (status === 200) {
+					Swal.fire("Success!", message, "success").then(() => {
+						window.location.reload();
+					});
+				} else {
+					Swal.fire(`Error ${status}`, message, "error");
+				}
+			}
+		});
+	}
+
+	async function alertDeleteAllKontak() {
+		Swal.fire({
+			title: `Delete All Contacts`,
+			html: `Are you sure you want to delete all contacts?`,
+			icon: "warning",
+			confirmButtonText: `Delete All`,
+			showCancelButton: true,
+			showLoaderOnConfirm: true,
+			preConfirm: async () => {
+				try {
+					const response = await fetch(`/kontak/deleteAll`);
+					if (!response.ok) throw new Error(response.statusText);
+					return response.json();
+				} catch (error) {
+					Swal.showValidationMessage(`Request failed: ${error}`);
+				}
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				const { status, message } = result.value;
+				if (status === 200) {
+					Swal.fire("Success!", message, "success").then(() => {
+						window.location.reload();
+					});
+				} else {
+					Swal.fire(`Error ${status}`, message, "error");
+				}
+			}
+		});
+	}
+
+	function alertKontak(add, telephone = "", name = "") {
+		const isAdd = add === true;
+		const titleSwal = isAdd ? "Add Kontak" : "Edit Kontak";
+		const confirmButtonText = isAdd ? "Save" : "Update";
+
+		const htmlSwal = `
+			<center>
+				<label style="padding: 10px;">Name</label>
+				<div class="col-md-8 form-group">
+					<input id="nameId" type="text" class="form-control" value="${name}" placeholder="Input Name"/>
+				</div>
+				${isAdd ? `
+					<label style="padding: 10px;">Telephone</label>
+					<div class="col-md-8 form-group">
+						<input id="telephoneId" type="number" class="form-control" placeholder="Input Telephone"/>
+					</div>` : ""
+				}
+			</center>`;
+
+		Swal.fire({
+			title: titleSwal,
+			html: htmlSwal,
+			focusConfirm: false,
+			showCancelButton: true,
+			confirmButtonText,
+			showLoaderOnConfirm: true,
+			preConfirm: async () => {
+				const endpoint = isAdd ? "create" : "edit";
+				const data = JSON.stringify({
+					telephone: isAdd ? document.getElementById("telephoneId").value : telephone,
+					name: document.getElementById("nameId").value,
+				});
+
+				try {
+					const response = await fetch(`/kontak/${endpoint}`, {
+						method: "POST",
+						body: data,
+						headers: { "Content-Type": "application/json" },
+					});
+					if (!response.ok) throw new Error(response.statusText);
+					return response.json();
+				} catch (error) {
+					Swal.showValidationMessage(`Request failed: ${error}`);
+				}
+			},
+			allowOutsideClick: () => !Swal.isLoading(),
+		}).then((result) => {
+			if (result.isConfirmed) {
+				Swal.fire("Success!", "Operation successful", "success").then(() => {
+					window.location.reload();
+				});
+			}
+		});
+	}
+</script>

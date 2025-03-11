@@ -38,7 +38,7 @@ class Client {
             firstImageId: "123",
             salePriceAmount1000: options.salePrice ? options.salePrice : "10000000",
             retailerId: options.retailer ? options.retailer : "",
-            url: options.urlProduct ? options.urlProduct : "zekais.com",
+            url: options.urlProduct ? options.urlProduct : "Akas.com",
           },
           footer,
           body,

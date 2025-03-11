@@ -1,4 +1,5 @@
 import AutoReplyModel from "../models/autoReply.model.js";
+import KontakModel from "../models/kontak.model.js";
 import ButtonResponseModel from "../models/buttonRespon.model.js";
 import ListResponseModel from "../models/listRespon.model.js";
 import { moment } from "../../config/index.js";
@@ -130,4 +131,65 @@ class AutoReply {
 	}
 }
 
-export { ButtonResponse, ListResponse, AutoReply };
+class Kontak {
+	constructor() {
+		this.kon = KontakModel;
+	}
+
+	// Membuat kontak baru
+	async create(telephone, name) {
+		return await this.kon.create({ telephone, name });
+	}
+
+	// Mengecek apakah kontak sudah ada
+	async checkExist(telephone, name) {
+		const kontakList = await this.kon.findAll({ where: { telephone } });
+
+		return kontakList.some((kontak) => kontak.name === name);
+	}
+
+	// Mengedit kontak berdasarkan nomor telepon dan nama
+	async edit(telephone, name, newName) {
+		const kontakList = await this.kon.findAll({ where: { telephone } });
+
+		if (!kontakList.length) return false;
+
+		await Promise.all(
+			kontakList.map(async (kontak) => {
+				if (kontak.name === name) {
+					await kontak.update({ name: newName });
+				}
+			})
+		);
+
+		return true;
+	}
+
+	// Menghapus kontak berdasarkan nomor telepon dan nama
+	async delete(telephone, name) {
+		const kontak = await this.kon.findOne({ where: { telephone, name } });
+
+		if (!kontak) return false;
+
+		await kontak.destroy();
+		return true;
+	}
+
+	// Mengecek apakah pengguna memiliki pesan terkait
+	async checkMessageUser(telephone, name) {
+		const kontakList = await this.kon.findAll({ where: { telephone: telephone.split("@")[0] } });
+
+		if (!kontakList.length) return false;
+
+		const kontak = kontakList.find((k) => k.name.toLowerCase() === name.toLowerCase());
+
+		return kontak || false;
+	}
+
+	// Menghapus semua keyword dalam tabel kontak
+	async deleteAllKeyword() {
+		await this.kon.destroy({ truncate: true });
+	}
+}
+
+export { ButtonResponse, ListResponse, AutoReply, Kontak };

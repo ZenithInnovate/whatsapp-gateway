@@ -9,6 +9,7 @@ import routerUser from "../router/session/session.router.js";
 import routerDashboard from "../router/dashboard/dashboard.router.js";
 import routerApi from "../router/api/api.router.js";
 import routerAutoReply from "../router/dashboard/AutoReply/autoReply.router.js";
+import routerKontak from "../router/dashboard/AutoReply/kontak.router.js";
 
 class App {
 	constructor() {
@@ -53,6 +54,7 @@ class App {
 		this.app.use("/session", routerUser);
 		this.app.use("/api", routerApi);
 		this.app.use("/reply", routerAutoReply);
+		this.app.use("/kontak", routerKontak);
 	}
 }
 
